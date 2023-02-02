@@ -128,6 +128,5 @@ class Method_MLP(method, nn.Module):
         plt.ylabel('Loss')
         plt.grid()
         plt.legend(loc='lower right')
-        plt.show()
 
         plt.savefig('../../result/stage_2_result/MLP_' + 'learning_curve.png')
