@@ -7,16 +7,21 @@ Concrete ResultModule class for a specific experiment ResultModule output
 
 from code.base_class.result import result
 import pickle
-
+import os
 
 class Result_Saver(result):
     data = None
-    fold_count = None
     result_destination_folder_path = None
     result_destination_file_name = None
+    counter = 1
     
     def save(self):
         print('saving results...')
-        f = open(self.result_destination_folder_path + self.result_destination_file_name + '_' + str(self.fold_count), 'wb')
+
+        while os.path.exists(path):
+            path = self.result_destination_file_name + " (" + str(self.counter) + ")"
+            self.counter += 1
+
+        f = open(self.result_destination_folder_path + self.result_destination_file_name, 'wb')
         pickle.dump(self.data, f)
         f.close()
