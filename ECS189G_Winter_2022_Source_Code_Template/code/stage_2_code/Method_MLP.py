@@ -29,17 +29,14 @@ class Method_MLP(method, nn.Module):
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
         self.fc_layer_1 = nn.Linear(784, 512)
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        self.activation_func_1 = nn.ReLU()
 
         self.fc_layer_2 = nn.Linear(512, 256)
-        self.activation_func_2 = nn.ReLU()
-
         self.fc_layer_3 = nn.Linear(256, 128)
-        self.activation_func_3 = nn.ReLU()
-
         self.fc_layer_4 = nn.Linear(128, 10)
+
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
-        self.activation_func_4 = nn.Softmax(dim=1)
+        self.softmax = nn.Softmax(dim=1)
+        self.relu = nn.ReLU()
 
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
@@ -47,12 +44,15 @@ class Method_MLP(method, nn.Module):
     def forward(self, x):
         '''Forward propagation'''
         # hidden layer embeddings
-        h = self.activation_func_1(self.fc_layer_1(x))
+        x = self.relu(self.fc_layer_1(x))
         # outout layer result
         # self.fc_layer_2(h) will be a nx2 tensor
         # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
         # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        y_pred = self.activation_func_2(self.fc_layer_2(h))
+        x = self.relu(self.fc_layer_2(x))
+        x = self.relu(self.fc_layer_3(x))
+        y_pred = self.softmax(self.fc_layer_4(x))
+
         return y_pred
 
     # backward error propagation will be implemented by pytorch automatically
@@ -88,17 +88,14 @@ class Method_MLP(method, nn.Module):
 
             if epoch%100 == 0:
                 accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
-                train_accuracy = accuracy_evaluator.evaluate()
-                self.data['train_accuracy'].append(train_accuracy)
+                self.data['train_loss'].append(train_loss.item())
 
-                test_y_true = self.data['test']['y']
-                test_y_pred = self.test(self.data['test']['X'])
+                test_y_true = torch.LongTensor(self.data['test']['y'])
+                test_y_pred = self.forward(torch.FloatTensor(np.array(self.data['test']['X'])))
 
-                test_accuracy_eval = Evaluate_Accuracy('testing evaluator', '')
-                test_accuracy_eval.data = {'true_y': test_y_true, 'pred_y': test_y_pred}
-                self.data['test_accuracy'].append(test_accuracy_eval.evaluate())
+                self.data['test_loss'].append(loss_function(test_y_pred, test_y_true).item())
 
-                print('Epoch:', epoch, 'Accuracy:', train_accuracy, 'Loss:', train_loss.item())
+                print('Epoch:', epoch, 'Accuracy:', accuracy_evaluator.evaluate(), 'Loss:', train_loss.item())
 
     def test(self, X):
         # do the testing, and result the result
@@ -118,19 +115,17 @@ class Method_MLP(method, nn.Module):
 
     def save_plot(self):
         epochs = ['100', '200', '300', '400', '500']
-        train_mean = self.data['train_accuracy']
+        train_mean = self.data['train_loss']
         train_std = 0
         test_std = 0
-        test_mean = self.data['test_accuracy']
+        test_mean = self.data['test_loss']
 
-        plt.plot(epochs, train_mean, color='blue', marker='o', markersize=5, label='Training Accuracy')
-        #plt.fill_between(epochs, train_mean + train_std, train_mean - train_std, alpha=0.15, color='blue')
+        plt.plot(epochs, train_mean, color='blue', marker='o', markersize=5, label='Training Loss')
         plt.plot(epochs, test_mean, color='green', marker='+', markersize=5, linestyle='--',
-                 label='Validation Accuracy')
-        #plt.fill_between(epochs, test_mean + test_std, test_mean - test_std, alpha=0.15, color='green')
+                 label='Validation Loss')
         plt.title('Learning Curve')
-        plt.xlabel('Training Data Size')
-        plt.ylabel('Model accuracy')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
         plt.grid()
         plt.legend(loc='lower right')
         plt.show()
