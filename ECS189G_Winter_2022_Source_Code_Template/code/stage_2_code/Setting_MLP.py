@@ -19,12 +19,12 @@ class Setting_MLP(setting):
         y_train = np.array(loaded_data['y_train'])
         y_test = np.array(loaded_data['y_test'])
 
-        train_accuracy = []
-        test_accuracy = []
+        train_loss = []
+        test_loss = []
 
         # run MethodModule
         self.method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test},
-                            'train_accuracy': train_accuracy, 'test_accuracy': test_accuracy}
+                            'train_loss': train_loss, 'test_loss': test_loss}
         learned_result = self.method.run()
         self.method.save_plot()
 
