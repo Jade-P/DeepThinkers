@@ -17,9 +17,11 @@ class Result_Saver(result):
     
     def save(self):
         print('saving results...')
+        path = self.result_destination_folder_path + self.result_destination_file_name
 
         while os.path.exists(path):
-            path = self.result_destination_file_name + " (" + str(self.counter) + ")"
+            path = self.result_destination_folder_path + self.result_destination_file_name + \
+                   " (" + str(self.counter) + ")"
             self.counter += 1
 
         f = open(self.result_destination_folder_path + self.result_destination_file_name, 'wb')
