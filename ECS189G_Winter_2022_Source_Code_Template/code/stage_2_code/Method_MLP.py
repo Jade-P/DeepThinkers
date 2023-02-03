@@ -38,6 +38,19 @@ class Method_MLP(method, nn.Module):
         self.softmax = nn.Softmax(dim=1)
         self.relu = nn.ReLU()
 
+        # MODEL 2: extra layers
+        '''
+        self.fc_layer_1 = nn.Linear(784, 655)
+        self.fc_layer_2 = nn.Linear(655, 526)
+        self.fc_layer_3 = nn.Linear(526, 397)
+        self.fc_layer_4 = nn.Linear(397, 268)
+        self.fc_layer_5 = nn.Linear(268, 139)
+        self.fc_layer_6 = nn.Linear(139, 10)
+        '''
+
+        # MODEL 3: sigmoid activation function (differences only in forward function)
+        self.sigmoid = nn.Sigmoid()
+
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
 
