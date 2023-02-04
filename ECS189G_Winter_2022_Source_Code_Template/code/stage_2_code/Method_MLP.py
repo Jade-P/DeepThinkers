@@ -129,8 +129,6 @@ class Method_MLP(method, nn.Module):
     def save_plot(self):
         epochs = ['100', '200', '300', '400', '500']
         train_mean = self.data['train_loss']
-        train_std = 0
-        test_std = 0
         test_mean = self.data['test_loss']
 
         plt.plot(epochs, train_mean, color='blue', marker='o', markersize=5, label='Training Loss')
