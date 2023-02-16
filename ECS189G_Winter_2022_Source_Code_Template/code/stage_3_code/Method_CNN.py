@@ -26,11 +26,12 @@ class Method_CNN(method, nn.Module):
     def __init__(self, mName, mDescription):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
-        self.conv_layer1 = nn.Conv2d(3, 32, kernel_size=3)
-        self.conv_layer2 = nn.Conv2d(32, 64, kernel_size=3, stride=1)
-        self.pool_layer1 = nn.MaxPool2d(2,2)
+        self.conv_layer1 = nn.Conv2d(3, 16, kernel_size=3)
+        self.conv_layer2 = nn.Conv2d(16, 32, kernel_size=3, stride=1)
+        self.pool_layer1 = nn.MaxPool2d((2,2), stride=2)
         self.flatten = nn.Flatten()
-        self.fc_layer1 = nn.Linear()
+
+        self.fc_layer1 = nn.Linear(in_features=4608, out_features=500)
 
         self.softmax = nn.Softmax(dim=1)
         self.relu = nn.ReLU()
@@ -39,15 +40,11 @@ class Method_CNN(method, nn.Module):
 
     def forward(self, x):
         '''Forward propagation'''
-        # hidden layer embeddings
-        x = self.relu(self.fc_layer_1(x))
-        # outout layer result
-        # self.fc_layer_2(h) will be a nx2 tensor
-        # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
-        # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        x = self.relu(self.fc_layer_2(x))
-        x = self.relu(self.fc_layer_3(x))
-        y_pred = self.softmax(self.fc_layer_4(x))
+        x = self.relu(self.conv_layer1(x))
+        x = self.relu(self.conv_layer2(x))
+        x = self.pool_layer1(x)
+        x = self.fc_layer1(self.flatten(x))
+        y_pred = self.softmax(x)
 
         return y_pred
 
@@ -118,9 +115,4 @@ class Method_CNN(method, nn.Module):
         plt.plot(epochs, test_mean, color='green', marker='+', markersize=5, linestyle='--',
                  label='Validation Loss')
         plt.title('Learning Curve')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss')
-        plt.grid()
-        plt.legend(loc='upper right')
-
-        plt.savefig('../../result/stage_2_result/MLP_' + 'learning_curve.png')
+        plt.x
