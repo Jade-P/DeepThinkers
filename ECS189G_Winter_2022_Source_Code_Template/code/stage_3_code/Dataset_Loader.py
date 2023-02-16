@@ -30,11 +30,8 @@ class Dataset_Loader(dataset):
         y_test = []
         for pair in data['train']:
             # for pair in data['test']:
-            plt.imshow(pair['image'], cmap="Greys")
             X_train.append(pair['image'])
             y_train.append(pair['label'])
-            plt.show()
-            print(pair['label'])
 
         for pair in data['test']:
             X_test.append(pair['image'])
