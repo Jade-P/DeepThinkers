@@ -1,3 +1,10 @@
+'''
+Concrete MethodModule class for a specific learning MethodModule
+'''
+
+# Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
+# License: TBD
+
 from code.base_class.method import method
 from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
 import torch
@@ -19,45 +26,25 @@ class Method_CNN(method, nn.Module):
     def __init__(self, mName, mDescription):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
-        # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
-        self.fc_layer_1 = nn.Linear(784, 512)
-        # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
+        self.conv_layer1 = nn.Conv2d(3, 16, kernel_size=3)
+        self.conv_layer2 = nn.Conv2d(16, 32, kernel_size=3, stride=1)
+        self.pool_layer1 = nn.MaxPool2d((2,2), stride=2)
+        self.flatten = nn.Flatten()
 
-        self.fc_layer_2 = nn.Linear(512, 256)
-        self.fc_layer_3 = nn.Linear(256, 128)
-        self.fc_layer_4 = nn.Linear(128, 10)
+        self.fc_layer1 = nn.Linear(in_features=4608, out_features=500)
 
-        # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         self.softmax = nn.Softmax(dim=1)
         self.relu = nn.ReLU()
 
-        # MODEL 2: extra layers
-        '''
-        self.fc_layer_1 = nn.Linear(784, 655)
-        self.fc_layer_2 = nn.Linear(655, 526)
-        self.fc_layer_3 = nn.Linear(526, 397)
-        self.fc_layer_4 = nn.Linear(397, 268)
-        self.fc_layer_5 = nn.Linear(268, 139)
-        self.fc_layer_6 = nn.Linear(139, 10)
-        '''
-
-        # MODEL 3: sigmoid activation function (differences only in forward function)
         self.sigmoid = nn.Sigmoid()
-
-    # it defines the forward propagation function for input x
-    # this function will calculate the output layer by layer
 
     def forward(self, x):
         '''Forward propagation'''
-        # hidden layer embeddings
-        x = self.relu(self.fc_layer_1(x))
-        # outout layer result
-        # self.fc_layer_2(h) will be a nx2 tensor
-        # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
-        # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        x = self.relu(self.fc_layer_2(x))
-        x = self.relu(self.fc_layer_3(x))
-        y_pred = self.softmax(self.fc_layer_4(x))
+        x = self.relu(self.conv_layer1(x))
+        x = self.relu(self.conv_layer2(x))
+        x = self.pool_layer1(x)
+        x = self.fc_layer1(self.flatten(x))
+        y_pred = self.softmax(x)
 
         return y_pred
 
@@ -128,9 +115,4 @@ class Method_CNN(method, nn.Module):
         plt.plot(epochs, test_mean, color='green', marker='+', markersize=5, linestyle='--',
                  label='Validation Loss')
         plt.title('Learning Curve')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss')
-        plt.grid()
-        plt.legend(loc='upper right')
-
-        plt.savefig('../../result/stage_2_result/MLP_' + 'learning_curve.png')
+        plt.x
