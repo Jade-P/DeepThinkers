@@ -7,6 +7,8 @@ Concrete IO class for a specific dataset
 
 from code.base_class.dataset import dataset
 import pandas as pd
+import pickle
+import matplotlib.pyplot as plt
 
 class Dataset_Loader(dataset):
     data = None
@@ -17,15 +19,28 @@ class Dataset_Loader(dataset):
         super().__init__(dName, dDescription)
 
     def load(self):
-        print('loading data...')
-        X = []
-        y = []
-        train_data = pd.read_csv(self.dataset_source_folder_path + self.dataset_source_file_name)
-        X_train = train_data.iloc[:, 1:]
-        y_train = train_data.iloc[:, 0]
+        f = open(self.dataset_source_folder_path + self.dataset_source_file_name, 'rb')
+        data = pickle.load(f)
+        f.close()
+        print('training set size:', len(data['train']), 'testing set size:',
+              len(data['test']))
+        X_train = []
+        y_train = []
+        X_test = []
+        y_test = []
+        for pair in data['train']:
+            # for pair in data['test']:
+            plt.imshow(pair['image'], cmap="Greys")
+            X_train.append(pair['image'])
+            y_train.append(pair['label'])
+            plt.show()
+            print(pair['label'])
 
-        test_data = pd.read_csv(self.dataset_source_folder_path + 'test.csv')
-        X_test = test_data.iloc[:, 1:]
-        y_test = test_data.iloc[:, 0]
+        for pair in data['test']:
+            X_test.append(pair['image'])
+            y_test.append(pair['label'])
 
         return {'X_train': X_train, 'X_test': X_test, 'y_train': y_train, 'y_test': y_test}
+
+        # x_train is the value of the top-level dictionary for key 'train',
+        # then the values for all of the keys 'image' in all of the dictionaries
