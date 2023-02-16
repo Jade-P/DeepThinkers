@@ -9,6 +9,7 @@ from code.base_class.setting import setting
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+
 class Setting_CNN(setting):
     def load_run_save_evaluate(self):
         # load dataset
@@ -35,4 +36,3 @@ class Setting_CNN(setting):
         self.evaluate.data = learned_result
 
         return self.evaluate.evaluate(), None
-
