@@ -1,5 +1,5 @@
 from code.stage_3_code.Dataset_Loader import Dataset_Loader
-from code.stage_3_code.Method_CNN import Method_CNN
+from code.stage_3_code.Method_CNN_ORL import Method_CNN
 from code.stage_3_code.Result_Saver import Result_Saver
 from code.stage_3_code.Setting_CNN import Setting_CNN
 from code.stage_3_code.Evaluate_Accuracy import Evaluate_Accuracy
